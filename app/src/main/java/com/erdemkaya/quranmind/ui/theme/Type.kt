@@ -48,6 +48,9 @@ val Typography = Typography(
     labelSmall = TextStyle(
         fontFamily = Cormorant, fontWeight = FontWeight.Normal, fontSize = 11.sp
     ),
+    labelMedium = TextStyle(
+        fontFamily = Cormorant, fontWeight = FontWeight.Normal, fontSize = 13.sp
+    ),
     bodyMedium = TextStyle(
         fontFamily = Cormorant, fontWeight = FontWeight.Medium, fontSize = 15.sp
     ),

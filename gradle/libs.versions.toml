@@ -15,6 +15,7 @@ ktor = "3.0.0"
 ktorClientLogging = "2.3.8"
 securityCryptoKtx = "1.1.0-alpha07"
 coreSplashscreen = "1.0.1"
+ui = "1.8.3"
 ummalquraCalendar = "2.0.2"
 
 [libraries]
@@ -45,6 +46,7 @@ ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx
 androidx-security-crypto-ktx = { module = "androidx.security:security-crypto-ktx", version.ref = "securityCryptoKtx" }
 androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreen" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
+ui = { module = "androidx.compose.ui:ui-graphics", version.ref = "ui" }
 ummalqura-calendar = { module = "com.github.msarhan:ummalqura-calendar", version.ref = "ummalquraCalendar" }
 
 [plugins]
