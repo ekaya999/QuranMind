@@ -1,6 +1,5 @@
 package com.erdemkaya.quranmind.ui.core.presentation.home
 
-import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,47 +20,47 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
 import com.erdemkaya.quranmind.R
 import com.erdemkaya.quranmind.ui.core.presentation.components.QuranMindNavBar
 import com.erdemkaya.quranmind.ui.core.presentation.components.QuranMindScaffold
 import com.erdemkaya.quranmind.ui.core.presentation.components.ShareableCard
-import com.erdemkaya.quranmind.ui.core.presentation.components.saveToCacheAndGetUri
-import com.erdemkaya.quranmind.ui.core.presentation.components.saveToGallery
-import com.erdemkaya.quranmind.ui.core.presentation.components.shareImageUri
 import com.erdemkaya.quranmind.ui.core.presentation.components.util.hijriDateText
-import com.github.msarhan.ummalqura.calendar.UmmalquraCalendar
+import com.erdemkaya.quranmind.ui.theme.QuranMindTheme
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import java.util.Calendar
 import java.util.Locale
 
 @Composable
 fun HomeScreenPortrait(
-    navHostController: NavHostController
+    state: HomeState, onAction: (HomeAction) -> Unit
 ) {
 
-    val context = LocalContext.current
-    val imageBitmap = remember { mutableStateOf<ImageBitmap?>(null) }
+    LocalContext.current
+    //val imageBitmap = remember { mutableStateOf<ImageBitmap?>(null) }
     val textArabic = "فَإِنَّ مَعَ الْعُسْرِ يُسْرًا"
     val textTurkish = "Şüphesiz, zorlukla beraber bir kolaylık vardır."
     val quranSure = "İnşirah Suresi, 94:6"
 
     QuranMindScaffold(bottomBar = {
         QuranMindNavBar(
-            currentScreen = "home", navHostController = navHostController, modifier = Modifier
+            currentScreen = "home", onNavItemClick = { route ->
+                when (route) {
+                    "home" -> {}
+                    "quran" -> onAction(HomeAction.OnQuranClick)
+                    "dua" -> onAction(HomeAction.OnDuaClick)
+                    "profile" -> onAction(HomeAction.OnProfileClick)
+                }
+            }, modifier = Modifier
         )
     }, content = { paddingValues ->
         Column(
@@ -125,7 +124,7 @@ fun HomeScreenPortrait(
                     textTurkish = textTurkish,
                     quranSure = quranSure,
                     onBitmapCaptured = {
-                        imageBitmap.value = it
+                        onAction(HomeAction.OnBitmapCreated(it))
                     },
                     showBorder = false,
                     showSignature = true
@@ -155,10 +154,8 @@ fun HomeScreenPortrait(
                 }
                 IconButton(
                     onClick = {
-                        imageBitmap.value?.let { bitmap ->
-                            val androidBitmap = bitmap.asAndroidBitmap()
-
-                            // In Galerie speichern
+                        state.imageBitmap?.let { bitmap ->
+                            /*val androidBitmap = bitmap.asAndroidBitmap()
                             val saved = androidBitmap.saveToGallery(context)
                             if (saved) {
                                 Toast.makeText(
@@ -168,7 +165,9 @@ fun HomeScreenPortrait(
                                 Toast.makeText(
                                     context, "Görsel kaydedilemedi", Toast.LENGTH_SHORT
                                 ).show()
-                            }
+                            } */
+                            onAction(HomeAction.OnSaveClick)
+
                         }
                     },
                 ) {
@@ -183,10 +182,11 @@ fun HomeScreenPortrait(
                 }
                 IconButton(
                     onClick = {
-                        imageBitmap.value?.let {
-                            val bmp = it.asAndroidBitmap()
-                            val uri = bmp.saveToCacheAndGetUri(context)
-                            shareImageUri(context, uri)
+                        state.imageBitmap?.let {
+                        /*val bmp = it.asAndroidBitmap()
+                          val uri = bmp.saveToCacheAndGetUri(context)
+                          shareImageUri(context, uri)*/
+                            onAction(HomeAction.OnShareClick)
                         }
                     },
                 ) {
@@ -205,11 +205,13 @@ fun HomeScreenPortrait(
 }
 
 
-
-//@Preview(showBackground = true, backgroundColor = 0xFF0C3B2E)
-//@Composable
-//private fun HomeScreenPortraitPreview() {
-//    QuranMindTheme {
-//        HomeScreenPortrait()
-//    }
-//}
+@Preview(showBackground = true, backgroundColor = 0xFF0C3B2E)
+@Composable
+private fun HomeScreenPortraitPreview() {
+    QuranMindTheme {
+        HomeScreenPortrait(
+            state = HomeState(),
+            onAction = {}
+        )
+    }
+}

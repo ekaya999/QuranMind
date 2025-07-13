@@ -25,7 +25,11 @@ private fun NavGraphBuilder.homeGraph(navController: NavHostController) {
         startDestination = "homeScreen", route = "home"
     ) {
         composable(route = "homeScreen") {
-            HomeScreenRoot(navController)
+            HomeScreenRoot(
+                onDuaClick = { navController.navigate("dua") },
+                onQuranClick = { navController.navigate("quran") },
+                onProfileClick = { navController.navigate("profile") }
+            )
         }
     }
 }

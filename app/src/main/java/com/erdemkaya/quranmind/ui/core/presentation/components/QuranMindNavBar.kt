@@ -18,7 +18,7 @@ import com.erdemkaya.quranmind.ui.core.presentation.components.util.QuranMindNav
 
 @Composable
 fun QuranMindNavBar(
-    currentScreen: String, navHostController: NavHostController, modifier: Modifier
+    currentScreen: String, onNavItemClick: (String) -> Unit, modifier: Modifier
 ) {
     val items = listOf(
         QuranMindNavBarItem.Home, QuranMindNavBarItem.Quran, QuranMindNavBarItem.Dua,
@@ -42,7 +42,7 @@ fun QuranMindNavBar(
                         indicatorColor = Color.Transparent
                     ),
                     onClick = {
-                        navHostController.navigate(item.screenRoute)
+                        onNavItemClick(item.screenRoute)
                     },
                     icon = {
                         Icon(
