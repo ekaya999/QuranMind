@@ -12,6 +12,7 @@ fun HomeScreenRoot(
     onDuaClick: () -> Unit,
     onProfileClick: () -> Unit,
     viewModel: HomeViewModel = koinViewModel(),
+    state: HomeState,
 ) {
 
     val onAction: (HomeAction) -> Unit = { action ->
@@ -21,12 +22,13 @@ fun HomeScreenRoot(
             HomeAction.OnProfileClick -> onProfileClick()
             else -> Unit
         }
+        viewModel.onAction(action)
     }
 
     val posture = LocalDevicePosture.current
     when (posture) {
-        DevicePosture.Landscape -> HomeScreenLandscape(viewModel.state, onAction)
-        DevicePosture.Tablet -> HomeScreenTablet(viewModel.state, onAction)
-        DevicePosture.Portrait -> HomeScreenPortrait(viewModel.state, onAction)
+        DevicePosture.Landscape -> HomeScreenLandscape(state, onAction)
+        DevicePosture.Tablet -> HomeScreenTablet(state, onAction)
+        DevicePosture.Portrait -> HomeScreenPortrait(state, onAction)
     }
 }

@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
+    id("com.google.devtools.ksp")
 }
 
 android {
@@ -59,6 +60,9 @@ dependencies {
     implementation(libs.androidx.security.crypto.ktx)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.ummalqura.calendar)
+    implementation(libs.room.runtime)
+    implementation(libs.room.ktx)
+    ksp(libs.room.compiler)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

@@ -5,12 +5,16 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -29,12 +33,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.erdemkaya.quranmind.R
 import com.erdemkaya.quranmind.ui.core.presentation.components.QuranMindNavBar
 import com.erdemkaya.quranmind.ui.core.presentation.components.QuranMindScaffold
 import com.erdemkaya.quranmind.ui.core.presentation.components.ShareableCard
 import com.erdemkaya.quranmind.ui.core.presentation.components.util.hijriDateText
+import com.erdemkaya.quranmind.ui.theme.QuranMindTheme
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -67,6 +73,7 @@ fun HomeScreenLandscape(
                 .fillMaxSize()
                 .padding(paddingValues)
                 .padding(16.dp)
+                .windowInsetsPadding(WindowInsets.displayCutout)
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -97,14 +104,15 @@ fun HomeScreenLandscape(
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onBackground
             )
-            Spacer(Modifier.height(24.dp))
+            //Spacer(Modifier.height(24.dp))
 
-            Box {
+            Box(Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.Center) {
                 ShareableCard(
                     modifier = Modifier
                         .fillMaxWidth(.5f)
-                        .padding(horizontal = 16.dp)
-                        .aspectRatio(2f),
+                        //.padding(horizontal = 16.dp)
+                        .aspectRatio(1f),
                     textArabic = textArabic,
                     textTurkish = textTurkish,
                     quranSure = quranSure,
@@ -130,7 +138,7 @@ fun HomeScreenLandscape(
                 )
             }
 
-            Spacer(Modifier.height(8.dp))
+            //Spacer(Modifier.height(8.dp))
             Row(
                 Modifier
                     .fillMaxWidth()
@@ -189,10 +197,12 @@ fun HomeScreenLandscape(
 }
 
 
-//@Preview(showBackground = true, backgroundColor = 0xFF0C3B2E)
-//@Composable
-//private fun HomeScreenPortraitPreview() {
-//    QuranMindTheme {
-//        HomeScreenPortrait()
-//    }
-//}
+@Preview(showBackground = true, backgroundColor = 0xFF0C3B2E)
+@Composable
+private fun HomeScreenLandscapePreview() {
+    QuranMindTheme {
+        HomeScreenLandscape(
+            state = HomeState(),
+            onAction = {})
+    }
+}

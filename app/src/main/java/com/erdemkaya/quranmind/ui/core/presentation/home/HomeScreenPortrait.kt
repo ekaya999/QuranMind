@@ -20,7 +20,10 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -45,11 +48,10 @@ fun HomeScreenPortrait(
     state: HomeState, onAction: (HomeAction) -> Unit
 ) {
 
-    LocalContext.current
-    //val imageBitmap = remember { mutableStateOf<ImageBitmap?>(null) }
     val textArabic = "فَإِنَّ مَعَ الْعُسْرِ يُسْرًا"
     val textTurkish = "Şüphesiz, zorlukla beraber bir kolaylık vardır."
     val quranSure = "İnşirah Suresi, 94:6"
+    var bitmapCreated by remember { mutableStateOf(false) }
 
     QuranMindScaffold(bottomBar = {
         QuranMindNavBar(
@@ -124,7 +126,10 @@ fun HomeScreenPortrait(
                     textTurkish = textTurkish,
                     quranSure = quranSure,
                     onBitmapCaptured = {
-                        onAction(HomeAction.OnBitmapCreated(it))
+                        if(!bitmapCreated) {
+                            onAction(HomeAction.OnBitmapCreated(it))
+                            bitmapCreated = true
+                        }
                     },
                     showBorder = false,
                     showSignature = true
@@ -155,17 +160,6 @@ fun HomeScreenPortrait(
                 IconButton(
                     onClick = {
                         state.imageBitmap?.let { bitmap ->
-                            /*val androidBitmap = bitmap.asAndroidBitmap()
-                            val saved = androidBitmap.saveToGallery(context)
-                            if (saved) {
-                                Toast.makeText(
-                                    context, "Görsel galeriye kaydedildi", Toast.LENGTH_SHORT
-                                ).show()
-                            } else {
-                                Toast.makeText(
-                                    context, "Görsel kaydedilemedi", Toast.LENGTH_SHORT
-                                ).show()
-                            } */
                             onAction(HomeAction.OnSaveClick)
 
                         }
@@ -183,9 +177,6 @@ fun HomeScreenPortrait(
                 IconButton(
                     onClick = {
                         state.imageBitmap?.let {
-                        /*val bmp = it.asAndroidBitmap()
-                          val uri = bmp.saveToCacheAndGetUri(context)
-                          shareImageUri(context, uri)*/
                             onAction(HomeAction.OnShareClick)
                         }
                     },
@@ -210,8 +201,6 @@ fun HomeScreenPortrait(
 private fun HomeScreenPortraitPreview() {
     QuranMindTheme {
         HomeScreenPortrait(
-            state = HomeState(),
-            onAction = {}
-        )
+            state = HomeState(), onAction = {})
     }
 }

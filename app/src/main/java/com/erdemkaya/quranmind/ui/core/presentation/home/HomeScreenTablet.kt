@@ -29,12 +29,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.erdemkaya.quranmind.R
 import com.erdemkaya.quranmind.ui.core.presentation.components.QuranMindNavBar
 import com.erdemkaya.quranmind.ui.core.presentation.components.QuranMindScaffold
 import com.erdemkaya.quranmind.ui.core.presentation.components.ShareableCard
 import com.erdemkaya.quranmind.ui.core.presentation.components.util.hijriDateText
+import com.erdemkaya.quranmind.ui.theme.QuranMindTheme
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -99,12 +101,13 @@ fun HomeScreenTablet(
             )
             Spacer(Modifier.height(24.dp))
 
-            Box {
+            Box(Modifier.fillMaxWidth(),
+            contentAlignment = Alignment.Center) {
                 ShareableCard(
                     modifier = Modifier
                         .fillMaxWidth(.5f)
                         .padding(horizontal = 16.dp)
-                        .aspectRatio(2f),
+                        .aspectRatio(1f),
                     textArabic = textArabic,
                     textTurkish = textTurkish,
                     quranSure = quranSure,
@@ -189,10 +192,13 @@ fun HomeScreenTablet(
 }
 
 
-//@Preview(showBackground = true, backgroundColor = 0xFF0C3B2E)
-//@Composable
-//private fun HomeScreenPortraitPreview() {
-//    QuranMindTheme {
-//        HomeScreenPortrait()
-//    }
-//}
+@Preview(showBackground = true, backgroundColor = 0xFF0C3B2E)
+@Composable
+private fun HomeScreenTabletPreview() {
+    QuranMindTheme {
+        HomeScreenTablet(
+            state = HomeState(),
+            onAction = {}
+        )
+    }
+}

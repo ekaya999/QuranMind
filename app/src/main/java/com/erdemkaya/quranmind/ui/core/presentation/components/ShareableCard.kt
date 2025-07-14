@@ -192,7 +192,11 @@ fun shareImageUri(context: Context, uri: Uri) {
         putExtra(Intent.EXTRA_STREAM, uri)
         addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
     }
-    context.startActivity(Intent.createChooser(intent, "Görseli paylaş"))
+    val chooserIntent = Intent.createChooser(intent, "Görseli paylaş").apply {
+        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    }
+
+    context.startActivity(chooserIntent)
 }
 
 fun Bitmap.saveToGallery(context: Context): Boolean {
