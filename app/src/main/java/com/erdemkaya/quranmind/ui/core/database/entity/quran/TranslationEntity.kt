@@ -8,15 +8,17 @@ import androidx.room.PrimaryKey
 @Entity(
     tableName = "translations",
     foreignKeys = [ForeignKey(
-        entity = Verse::class,
+        entity = VerseEntity::class,
         parentColumns = ["id"],
         childColumns = ["verseId"],
         onDelete = ForeignKey.CASCADE
     )],
-    indices = [Index("verseId"), Index("languageCode")]
+    indices = [
+        Index(
+            value = ["verseId", "languageCode","translatorName"], unique = true)]
 )
 
-data class Translation (
+data class TranslationEntity (
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val verseId: Int,
     val languageCode: String,

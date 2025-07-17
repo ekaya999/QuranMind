@@ -3,22 +3,25 @@ package com.erdemkaya.quranmind.ui.core.navigation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavHost
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.navigation
 import com.erdemkaya.quranmind.ui.core.presentation.home.HomeScreenRoot
 import com.erdemkaya.quranmind.ui.core.presentation.home.HomeViewModel
+import com.erdemkaya.quranmind.ui.core.presentation.quran.QuranScreen
+import com.erdemkaya.quranmind.ui.core.presentation.quran.QuranScreenRoot
+import com.erdemkaya.quranmind.ui.core.presentation.quran.QuranViewModel
+import com.erdemkaya.quranmind.ui.core.presentation.quran.TranslationSelectionScreenRoot
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun NavigationRoot(
     navController: NavHostController,
-    homeViewModel: HomeViewModel = koinViewModel()
+    homeViewModel: HomeViewModel = koinViewModel(),
+    quranViewModel: QuranViewModel = koinViewModel()
 ) {
     val homeState by homeViewModel.state.collectAsStateWithLifecycle()
+    val quranState by quranViewModel.state.collectAsStateWithLifecycle()
 
     NavHost(
         navController = navController, startDestination = "home"
@@ -26,10 +29,38 @@ fun NavigationRoot(
         composable(route = "home") {
             HomeScreenRoot(
                 onDuaClick = { navController.navigate("dua") },
-                onQuranClick = { navController.navigate("quran") },
+                onQuranClick = { navController.navigate("translation") },
                 onProfileClick = { navController.navigate("profile") },
                 viewModel = homeViewModel,
                 state = homeState
+            )
+        }
+        composable(route = "translation") {
+            TranslationSelectionScreenRoot(
+                onTranslationSelected = { navController.navigate("quran") },
+                state = quranState,
+                viewModel = quranViewModel,
+                onHomeClick = {
+                    navController.navigate("home") {
+                        popUpTo("home") { inclusive = true }
+                        launchSingleTop = true
+                    }
+                },
+                onDuaClick = { navController.navigate("dua") },
+                onProfileClick = { navController.navigate("profile") })
+        }
+        composable("quran") {
+            QuranScreenRoot(
+                state = quranState,
+                viewModel = quranViewModel,
+                onHomeClick = {
+                    navController.navigate("home") {
+                        popUpTo("home") { inclusive = true }
+                        launchSingleTop = true
+                    }
+                },
+                onDuaClick = { navController.navigate("dua") },
+                onProfileClick = { navController.navigate("profile") }
             )
         }
     }
