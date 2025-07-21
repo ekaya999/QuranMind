@@ -9,7 +9,7 @@ data class QuranState(
     val error: String? = null,
     val selectedTranslations: Set<String> = emptySet(),
     val availableTranslations: List<TranslationInfo> = emptyList(),
-    val currentSurahNumber: Int = 3,
+    val currentSurahNumber: Int = 1,
     val searchQuery: String = "",
     val searchResults: List<VerseUiModel> = emptyList(),
     val selectedTranslation: String = "",

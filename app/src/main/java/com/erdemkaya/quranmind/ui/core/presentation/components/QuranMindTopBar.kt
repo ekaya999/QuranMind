@@ -1,7 +1,11 @@
 package com.erdemkaya.quranmind.ui.core.presentation.components
 
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
@@ -11,7 +15,6 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -23,12 +26,17 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.erdemkaya.quranmind.ui.core.presentation.components.util.surahAyahCounts
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun QuranMindTopBar(
-    modifier: Modifier = Modifier, title: String, onSurahSelected: (Int, Int) -> Unit
+    modifier: Modifier = Modifier,
+    title: String,
+    showSearch: Boolean = false,
+    onSurahSelected: (Int, Int) -> Unit
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
@@ -47,14 +55,16 @@ fun QuranMindTopBar(
             }, colors = TopAppBarDefaults.topAppBarColors(
                 containerColor = MaterialTheme.colorScheme.background
             ), actions = {
-                IconButton(
-                    onClick = { showDialog = true },
-                ) {
-                    Icon(
-                        Icons.Filled.Search,
-                        contentDescription = "Search",
-                        tint = MaterialTheme.colorScheme.primary
-                    )
+                if (showSearch) {
+                    IconButton(
+                        onClick = { showDialog = true },
+                    ) {
+                        Icon(
+                            Icons.Filled.Search,
+                            contentDescription = "Search",
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
                 }
             })
         HorizontalDivider(
@@ -75,35 +85,59 @@ fun SurahAyahDialog(
 ) {
     var selectedSurah by remember { mutableIntStateOf(1) }
     var selectedAyah by remember { mutableIntStateOf(1) }
+    var showAlphabetical by remember { mutableIntStateOf(0) }
+    val maxAyah = surahAyahCounts.getOrNull(selectedSurah - 1) ?: 286
 
     AlertDialog(onDismissRequest = onDismiss, confirmButton = {
         TextButton(onClick = { onConfirm(selectedSurah, selectedAyah) }) {
-            Text("Git")
+            Text(
+                "Git",
+                color = MaterialTheme.colorScheme.background,
+                style = MaterialTheme.typography.labelLarge
+            )
         }
     }, dismissButton = {
         TextButton(onClick = onDismiss) {
-            Text("İptal")
+            Text(
+                "İptal",
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.labelLarge
+            )
         }
-    }, title = { Text("Sure Seç") }, text = {
+    }, title = {
+        Text(
+            "Sûre ve Ayet seç", style = MaterialTheme.typography.titleLarge
+        )
+    }, text = {
         Column {
-            Text("Sure:")
-            Slider(
-                value = selectedSurah.toFloat(),
-                onValueChange = { selectedSurah = it.toInt() },
-                valueRange = 1f..114f,
-                steps = 112
-            )
-            Text("Seçilen Sure: $selectedSurah")
+            Spacer(Modifier.height(4.dp))
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                Text("Sûre: $selectedSurah")
+                Text(text = if(showAlphabetical == 0) "A .. Z" else if(showAlphabetical == 1) "1 .. 114" else "1..114 (Sûre ismi)",
+                    modifier = Modifier.clickable { if(showAlphabetical == 0) showAlphabetical = 1 else if(showAlphabetical == 1) showAlphabetical = 2 else showAlphabetical = 0 })
 
-            Text("Ayet:")
-            Slider(
-                value = selectedAyah.toFloat(),
-                onValueChange = { selectedAyah = it.toInt() },
-                valueRange = 1f..268f,
-                steps = 266
+            }
+            Spacer(Modifier.height(24.dp))
+            HorizontalNumberPicker(
+                minValue = 1,
+                maxValue = 114,
+                selectedValue = selectedSurah,
+                onValueSelected = { selectedSurah = it },
+                isSurah = true,
+                showAlphabetical = showAlphabetical
             )
-            Text("Seçilen Ayet: $selectedAyah")
-
+            Spacer(Modifier.height(16.dp))
+            HorizontalDivider(thickness = 1.dp, color = MaterialTheme.colorScheme.primary)
+            Spacer(Modifier.height(16.dp))
+            Text("Ayet", modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Start)
+            Spacer(Modifier.height(24.dp))
+            HorizontalNumberPicker(
+                minValue = 1,
+                maxValue = maxAyah,
+                selectedValue = selectedAyah,
+                onValueSelected = { selectedAyah = it },
+                isSurah = false
+            )
             Spacer(modifier = Modifier.height(16.dp))
         }
     })

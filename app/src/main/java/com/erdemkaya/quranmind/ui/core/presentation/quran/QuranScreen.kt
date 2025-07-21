@@ -26,13 +26,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.unit.dp
+import com.erdemkaya.quranmind.R
 import com.erdemkaya.quranmind.ui.core.presentation.components.QuranMindNavBar
 import com.erdemkaya.quranmind.ui.core.presentation.components.QuranMindScaffold
 import com.erdemkaya.quranmind.ui.core.presentation.components.QuranMindTopBar
+import com.erdemkaya.quranmind.ui.core.presentation.components.util.getSurahName
 import com.erdemkaya.quranmind.ui.core.presentation.quran.model.VerseUiModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -76,6 +79,7 @@ fun QuranScreen(
     }, topAppbar = {
         QuranMindTopBar(
             title = "${getSurahName(state.currentSurahNumber)} Sûresi",
+            showSearch = true,
             onSurahSelected = { surah, ayah ->
                 onAction(QuranAction.OnSearchSurahAndAyahClick(surah, ayah))
             })
@@ -117,7 +121,7 @@ fun VersesList(
 
     LaunchedEffect(selectedAyah) {
         selectedAyah?.let { ayahNumber ->
-            val index = verses.indexOfFirst { it.verseNumber == ayahNumber.toString() }
+            val index = verses.indexOfFirst { it.ayahNumber == ayahNumber }
             if (index >= 0) {
                 listState.animateScrollToItem(index)
             }
@@ -179,26 +183,35 @@ fun VerseCard(
             Spacer(modifier = Modifier.height(8.dp))
 
             // Arabic text
-            Text(
-                text = verse.arabicText, style = MaterialTheme.typography.bodyLarge.copy(
-                    textDirection = TextDirection.Rtl
-                ), modifier = Modifier.fillMaxWidth()
-            )
 
             // Translations
             verse.translations.forEach { translation ->
-                Spacer(modifier = Modifier.height(12.dp))
-
-                Text(
-                    text = translation.translatorInfo,
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                if (translation.languageCode != "ar") {
+                    Text(
+                        text = verse.arabicText, style = MaterialTheme.typography.bodyLarge.copy(
+                            textDirection = TextDirection.Rtl,
+                            fontFamily = FontFamily(Font(R.font.amiri_bold))
+                        ), modifier = Modifier.fillMaxWidth()
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Text(
+                        text = translation.translatorInfo,
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
 
                 Text(
                     text = translation.text,
-                    style = MaterialTheme.typography.headlineSmall,
-                    modifier = Modifier.padding(top = 4.dp)
+                    style = if (translation.languageCode == "ar") {
+                        MaterialTheme.typography.headlineSmall.copy(
+                            textDirection = TextDirection.Rtl,
+                            fontFamily = FontFamily(Font(R.font.amiri_bold))
+                        )
+                    } else {
+                        MaterialTheme.typography.headlineSmall
+                    },
+                    modifier = Modifier.fillMaxWidth().padding(top = 4.dp)
                 )
             }
         }
@@ -226,11 +239,3 @@ fun ErrorMessage(
     }
 }
 
-@Composable
-fun getSurahName(number: Int): String {
-    val context = LocalContext.current
-    val resId = context.resources.getIdentifier(
-        "surah_name$number", "string", context.packageName
-    )
-    return if (resId != 0) context.getString(resId) else ""
-}

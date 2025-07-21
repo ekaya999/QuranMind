@@ -52,7 +52,7 @@ class QuranViewModel(
         _state.update { it.copy(selectedAyahNumber = ayahNumber) }
     }
 
-    fun loadSurah(surahNumber: Int) {
+    fun loadSurah(surahNumber: Int, ayahNumber: Int? = null) {
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true, error = null) }
 
@@ -88,7 +88,7 @@ class QuranViewModel(
         }
 
         // Reload current surah with updated translations
-        _state.value.currentSurahNumber?.let { loadSurah(it) }
+        _state.value.currentSurahNumber.let { loadSurah(it) }
     }
 
     fun toggleBookmark(verseId: Int) {
