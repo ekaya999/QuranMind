@@ -40,6 +40,9 @@ interface QuranDao {
     )
     suspend fun getAvailableTranslations(): List<TranslationInfo>
 
+    @Query("SELECT COUNT(*) > 0 FROM translations WHERE languageCode = :lang AND translatorName = :translator")
+    suspend fun hasTranslation(lang: String, translator: String): Boolean
+
     @Insert
     suspend fun insertVerses(verses: List<VerseEntity>)
 

@@ -23,5 +23,5 @@ data class TranslationEntity (
     val verseId: Int,
     val languageCode: String,
     val translatorName: String,
-    val translationText: String
+    val translationText: String,
 )

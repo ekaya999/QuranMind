@@ -13,8 +13,7 @@ import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlPullParserFactory
 
 class DatabaseInitializer(
-    private val context: Context,
-    private val quranDao: QuranDao
+    private val context: Context, private val quranDao: QuranDao
 ) {
     fun initializeDatabase(onComplete: (() -> Unit)? = null) {
         CoroutineScope(Dispatchers.IO).launch {
@@ -43,8 +42,9 @@ class DatabaseInitializer(
 
     private suspend fun loadArabicVerses(xmlFiles: List<String>?) {
         val arabicFile = xmlFiles?.find {
-            it.contains("arabic", ignoreCase = true) ||
-                    (it.contains("quran", ignoreCase = true) && !it.contains("tr", ignoreCase = true))
+            it.contains("arabic", ignoreCase = true) || (it.contains(
+                "quran", ignoreCase = true
+            ) && !it.contains("tr", ignoreCase = true))
         }
 
         if (arabicFile != null) {
@@ -54,11 +54,8 @@ class DatabaseInitializer(
     }
 
     private suspend fun loadAllTranslations(xmlFiles: List<String>?) {
-        // Find all Turkish translation files
         val turkishFiles = xmlFiles?.filter {
-            it.contains("tr", ignoreCase = true) ||
-                    it.contains("turkish", ignoreCase = true) ||
-                    it.contains("turkce", ignoreCase = true)
+            it.contains("tr", ignoreCase = true)
         } ?: emptyList()
 
         val arabicFiles = xmlFiles?.filter {
@@ -70,7 +67,8 @@ class DatabaseInitializer(
         for (surah in 1..114) {
             val surahVerses = quranDao.getVersesWithTranslations(surah)
             surahVerses.forEach { verseEntity ->
-                verseMap[verseEntity.verse.surahNumber to verseEntity.verse.verseNumber] = verseEntity.verse.id
+                verseMap[verseEntity.verse.surahNumber to verseEntity.verse.verseNumber] =
+                    verseEntity.verse.id
             }
         }
 
@@ -79,21 +77,16 @@ class DatabaseInitializer(
             val fileNameLower = file.lowercase()
             val translatorNameTurkish = when {
                 fileNameLower.contains("diyanet") -> "Diyanet İşleri"
-                fileNameLower.contains("elmalili") || fileNameLower.contains("yazir") -> "Elmalılı Hamdi Yazır"
+                fileNameLower.contains("yazir") -> "Elmalılı Hamdi Yazır"
                 fileNameLower.contains("ates") -> "Süleyman Ateş"
                 fileNameLower.contains("ozturk") -> "Yaşar Nuri Öztürk"
                 fileNameLower.contains("yildirim") -> "Suat Yıldırım"
                 fileNameLower.contains("meal") -> "Diyanet Meali"
                 fileNameLower.contains("golpinarli") -> "Abdülbaki Gölpınarlı"
                 fileNameLower.contains("bulac") -> "Ali Bulaç"
-                else -> file.substringBeforeLast(".xml")
-                    .replace("quran-tr-", "")
-                    .replace("quran_tr_", "")
-                    .replace("tr_", "")
-                    .replace("-", " ")
-                    .replace("_", " ")
-                    .split(" ")
-                    .joinToString(" ") { it.capitalize() }
+                else -> file.substringBeforeLast(".xml").replace("quran-tr-", "")
+                    .replace("quran_tr_", "").replace("tr_", "").replace("-", " ").replace("_", " ")
+                    .split(" ").joinToString(" ") { it.capitalize() }
             }
             try {
                 loadTranslationFromXml(file, "tr", translatorNameTurkish, verseMap)
@@ -101,19 +94,19 @@ class DatabaseInitializer(
                 e.printStackTrace()
             }
         }
-            arabicFiles.forEach { file ->
-                val fileNameLower = file.lowercase()
-                val translatorNameArabic = when {
-                    fileNameLower.contains("arabic") -> "Arapça"
-                    else -> file.substringBeforeLast(".xml")
-                }
-
-                try {
-                    loadTranslationFromXml(file, "ar", translatorNameArabic, verseMap)
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
+        arabicFiles.forEach { file ->
+            val fileNameLower = file.lowercase()
+            val translatorNameArabic = when {
+                fileNameLower.contains("arabic") -> "Arapça"
+                else -> file.substringBeforeLast(".xml")
             }
+
+            try {
+                loadTranslationFromXml(file, "ar", translatorNameArabic, verseMap)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
     }
 
     private fun loadVersesFromXml(fileName: String): List<VerseEntity> {
@@ -134,10 +127,13 @@ class DatabaseInitializer(
                         XmlPullParser.START_TAG -> {
                             when (parser.name) {
                                 "sura" -> {
-                                    currentSurahNumber = parser.getAttributeValue(null, "index")?.toIntOrNull() ?: 0
+                                    currentSurahNumber =
+                                        parser.getAttributeValue(null, "index")?.toIntOrNull() ?: 0
                                 }
+
                                 "aya" -> {
-                                    val verseNumber = parser.getAttributeValue(null, "index")?.toIntOrNull() ?: 0
+                                    val verseNumber =
+                                        parser.getAttributeValue(null, "index")?.toIntOrNull() ?: 0
                                     val text = parser.getAttributeValue(null, "text") ?: ""
 
                                     if (currentSurahNumber > 0 && verseNumber > 0) {
@@ -186,10 +182,13 @@ class DatabaseInitializer(
                         XmlPullParser.START_TAG -> {
                             when (parser.name) {
                                 "sura" -> {
-                                    currentSurahNumber = parser.getAttributeValue(null, "index")?.toIntOrNull() ?: 0
+                                    currentSurahNumber =
+                                        parser.getAttributeValue(null, "index")?.toIntOrNull() ?: 0
                                 }
+
                                 "aya" -> {
-                                    val verseNumber = parser.getAttributeValue(null, "index")?.toIntOrNull() ?: 0
+                                    val verseNumber =
+                                        parser.getAttributeValue(null, "index")?.toIntOrNull() ?: 0
                                     val text = parser.getAttributeValue(null, "text") ?: ""
 
                                     if (currentSurahNumber > 0 && verseNumber > 0 && text.isNotEmpty()) {

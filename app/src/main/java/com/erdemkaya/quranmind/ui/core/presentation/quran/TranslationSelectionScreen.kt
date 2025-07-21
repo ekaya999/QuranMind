@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.selection.selectable
@@ -34,6 +33,7 @@ import com.erdemkaya.quranmind.ui.core.database.dao.quran.TranslationInfo
 import com.erdemkaya.quranmind.ui.core.presentation.components.QuranMindNavBar
 import com.erdemkaya.quranmind.ui.core.presentation.components.QuranMindScaffold
 import com.erdemkaya.quranmind.ui.core.presentation.components.QuranMindTopBar
+import com.erdemkaya.quranmind.ui.core.presentation.components.util.getLanguageName
 import com.erdemkaya.quranmind.ui.theme.QuranMindTheme
 
 @Composable
@@ -85,8 +85,7 @@ fun TranslationSelectionScreen(
         )
     }, topAppbar = {
         QuranMindTopBar(
-            title = "Kur'an-ı Kerim",
-            onSurahSelected = { _, _ -> }
+            title = "Kur'an-ı Kerim", onSurahSelected = { _, _ -> }, showSearch = false
         )
     }, content = { paddingValues ->
         Column(
@@ -95,10 +94,14 @@ fun TranslationSelectionScreen(
                 .padding(paddingValues)
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
-        ) {            val grouped = state.availableTranslations.groupBy { it.languageCode }
+        ) {
+            val grouped = state.availableTranslations.groupBy { it.languageCode }
 
             Card(
-                modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+                    .padding(top = 16.dp),
                 elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
             ) {
                 LazyColumn(
@@ -110,12 +113,7 @@ fun TranslationSelectionScreen(
                     grouped.forEach { (languageCode, translations) ->
                         item {
                             Text(
-                                text = when (languageCode) {
-                                    "tr" -> "Türkçe"
-                                    "en" -> "English"
-                                    "ar" -> "العربية"
-                                    else -> languageCode
-                                },
+                                text = getLanguageName(languageCode),
                                 style = MaterialTheme.typography.titleLarge,
                                 color = MaterialTheme.colorScheme.background,
                                 modifier = Modifier.padding(top = 8.dp)
@@ -143,26 +141,28 @@ fun TranslationSelectionScreen(
                 }
             }
 
-            Spacer(modifier = Modifier.weight(1f))
+            Spacer(modifier = Modifier.height(16.dp))
 
-            if(state.selectedTranslation.isNotEmpty()) {
+            if (state.selectedTranslation.isNotEmpty()) {
                 Button(
                     onClick = { onAction(QuranAction.OnSelectTranslationClick) },
                     modifier = Modifier.fillMaxWidth(),
                 ) {
                     Text(
-                        text = "Devam Et", style = MaterialTheme.typography.bodyLarge,
+                        text = "Devam Et",
+                        style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.background,
                         fontWeight = FontWeight.Bold
                     )
                 }
             } else {
                 Button(
-                    onClick = {  },
+                    onClick = { },
                     modifier = Modifier.fillMaxWidth(),
                 ) {
                     Text(
-                        text = "Çeviri seçin", style = MaterialTheme.typography.bodyLarge,
+                        text = "Çeviri seçin",
+                        style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.background,
                         fontWeight = FontWeight.Bold
                     )
@@ -190,28 +190,12 @@ fun TranslationOption(
                 unselectedColor = MaterialTheme.colorScheme.onSurfaceVariant
             )
         )
+        Text(
+            text = translation.translatorName,
+            style = MaterialTheme.typography.titleSmall,
+            fontWeight = FontWeight.Bold
+        )
 
-        Spacer(modifier = Modifier.width(8.dp))
-
-        Column(modifier = Modifier.weight(1f)) {
-            Text(
-                text = translation.translatorName,
-                style = MaterialTheme.typography.titleSmall,
-                fontWeight = FontWeight.Bold
-            )
-            Spacer(Modifier.height(4.dp))
-
-            Text(
-                text = when (translation.languageCode) {
-                    "tr" -> "Türkçe"
-                    "en" -> "English"
-                    "ar" -> "العربية"
-                    else -> translation.languageCode
-                },
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        }
     }
 }
 
