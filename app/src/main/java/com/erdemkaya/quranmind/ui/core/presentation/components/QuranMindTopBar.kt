@@ -26,8 +26,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.erdemkaya.quranmind.R
 import com.erdemkaya.quranmind.ui.core.presentation.components.util.surahAyahCounts
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -36,7 +38,9 @@ fun QuranMindTopBar(
     modifier: Modifier = Modifier,
     title: String,
     showSearch: Boolean = false,
-    onSurahSelected: (Int, Int) -> Unit
+    onSurahSelected: (Int, Int) -> Unit,
+    onTranslationSelectClick: (() -> Unit)? = null,
+    selectedLanguage: String
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
@@ -55,6 +59,15 @@ fun QuranMindTopBar(
             }, colors = TopAppBarDefaults.topAppBarColors(
                 containerColor = MaterialTheme.colorScheme.background
             ), actions = {
+                if (onTranslationSelectClick != null) {
+                    IconButton(onClick = onTranslationSelectClick) {
+                        Icon(
+                            painter = painterResource(R.drawable.baseline_language_24),
+                            contentDescription = "Select Translation",
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                }
                 if (showSearch) {
                     IconButton(
                         onClick = { showDialog = true },
@@ -74,14 +87,16 @@ fun QuranMindTopBar(
             SurahAyahDialog(onDismiss = { showDialog = false }, onConfirm = { surah, ayah ->
                 showDialog = false
                 onSurahSelected(surah, ayah)
-            })
+            },
+                selectedLanguage)
         }
     }
 }
 
 @Composable
 fun SurahAyahDialog(
-    onDismiss: () -> Unit, onConfirm: (Int, Int) -> Unit
+    onDismiss: () -> Unit, onConfirm: (Int, Int) -> Unit,
+    selectedLanguage: String
 ) {
     var selectedSurah by remember { mutableIntStateOf(1) }
     var selectedAyah by remember { mutableIntStateOf(1) }
@@ -111,10 +126,18 @@ fun SurahAyahDialog(
     }, text = {
         Column {
             Spacer(Modifier.height(4.dp))
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
                 Text("Sûre: $selectedSurah")
-                Text(text = if(showAlphabetical == 0) "A .. Z" else if(showAlphabetical == 1) "1 .. 114" else "1..114 (Sûre ismi)",
-                    modifier = Modifier.clickable { if(showAlphabetical == 0) showAlphabetical = 1 else if(showAlphabetical == 1) showAlphabetical = 2 else showAlphabetical = 0 })
+                Text(
+                    text = if (showAlphabetical == 0) "A .. Z" else if (showAlphabetical == 1) "1 .. 114" else "1..114 (Sûre ismi)",
+                    modifier = Modifier.clickable {
+                        if (showAlphabetical == 0) showAlphabetical =
+                            1 else if (showAlphabetical == 1) showAlphabetical =
+                            2 else showAlphabetical = 0
+                    })
 
             }
             Spacer(Modifier.height(24.dp))
@@ -124,7 +147,8 @@ fun SurahAyahDialog(
                 selectedValue = selectedSurah,
                 onValueSelected = { selectedSurah = it },
                 isSurah = true,
-                showAlphabetical = showAlphabetical
+                showAlphabetical = showAlphabetical,
+                selectedLanguage = selectedLanguage
             )
             Spacer(Modifier.height(16.dp))
             HorizontalDivider(thickness = 1.dp, color = MaterialTheme.colorScheme.primary)
@@ -136,7 +160,8 @@ fun SurahAyahDialog(
                 maxValue = maxAyah,
                 selectedValue = selectedAyah,
                 onValueSelected = { selectedAyah = it },
-                isSurah = false
+                isSurah = false,
+                selectedLanguage = selectedLanguage
             )
             Spacer(modifier = Modifier.height(16.dp))
         }

@@ -114,4 +114,35 @@
     <string name="surah_name112">İhlâs</string>
     <string name="surah_name113">Felâk</string>
     <string name="surah_name114">Nâs</string>
+    <string name="turkish">Türkçe</string>
+    <string name="english">İngilizce</string>
+    <string name="arabic">Arapça</string>
+    <string name="albanian">Arnavutça</string>
+    <string name="azerbaidjani">Azeri Türkçesi</string>
+    <string name="bengal">Bengalce</string>
+    <string name="bosnian">Boşnakça</string>
+    <string name="bulgarian">Bulgarca</string>
+    <string name="chinese">Çince</string>
+    <string name="german">Almanca</string>
+    <string name="selamaleykum">Selamün Aleyküm</string>
+    <string name="today">Bugün</string>
+    <string name="hicri">Hicri</string>
+    <string name="home">Anasayfa</string>
+    <string name="quran">Kuran</string>
+    <string name="dua">Dua</string>
+    <string name="profile">Profil</string>
+    <string-array name="hijri_months">
+        <item>Muharrem</item>
+        <item>Safer</item>
+        <item>Rebiülevvel</item>
+        <item>Rebiülahir</item>
+        <item>Cemaziyelevvel</item>
+        <item>Cemaziyelahir</item>
+        <item>Recep</item>
+        <item>Şaban</item>
+        <item>Ramazan</item>
+        <item>Şevval</item>
+        <item>Zilkade</item>
+        <item>Zilhicce</item>
+    </string-array>
 </resources>

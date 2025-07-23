@@ -27,8 +27,8 @@ fun HomeScreenRoot(
 
     val posture = LocalDevicePosture.current
     when (posture) {
-        DevicePosture.Landscape -> HomeScreenLandscape(state, onAction)
-        DevicePosture.Tablet -> HomeScreenTablet(state, onAction)
+        DevicePosture.Landscape -> HomeScreenPortrait(state, onAction)
+        DevicePosture.Tablet -> HomeScreenPortrait(state, onAction)
         DevicePosture.Portrait -> HomeScreenPortrait(state, onAction)
     }
 }

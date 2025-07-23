@@ -115,4 +115,35 @@
     <string name="surah_name112">سُورَةُ الْإِخْلَاصِ</string>
     <string name="surah_name113">سُورَةُ الْفَلَقِ</string>
     <string name="surah_name114">سُورَةُ النَّاسِ</string>
+    <string name="turkish">التركية</string>
+    <string name="english">الإنجليزية</string>
+    <string name="arabic">العربية</string>
+    <string name="albanian">الألبانية</string>
+    <string name="azerbaidjani">الآذرية التركية</string>
+    <string name="bengal">البنغالية</string>
+    <string name="bosnian">البوسنية</string>
+    <string name="bulgarian">البلغارية</string>
+    <string name="chinese">الصينية</string>
+    <string name="german">الألمانية</string>
+    <string name="selamaleykum">ٱلسَّلَامُ عَلَيْكُمْ</string>
+    <string name="today">اليوم</string>
+    <string name="hicri">هجري</string>
+    <string-array name="hijri_months">
+        <item>محرم</item>
+        <item>صفر</item>
+        <item>ربيع الأول</item>
+        <item>ربيع الآخر</item>
+        <item>جمادى الأولى</item>
+        <item>جمادى الآخرة</item>
+        <item>رجب</item>
+        <item>شعبان</item>
+        <item>رمضان</item>
+        <item>شوال</item>
+        <item>ذو القعدة</item>
+        <item>ذو الحجة</item>
+    </string-array>
+    <string name="home">الصفحة الرئيسية</string>
+    <string name="quran">القرآن الكريم</string>
+    <string name="dua">الدعاء</string>
+    <string name="profile">الملف الشخصي</string>
 </resources>

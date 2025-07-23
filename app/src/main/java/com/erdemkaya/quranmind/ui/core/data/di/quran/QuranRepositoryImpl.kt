@@ -24,7 +24,18 @@ class QuranRepositoryImpl(
         emit(translationEntity?.toDomain())
     }
 
+    override suspend fun hasTranslation(
+        language: String,
+        translator: String
+    ): Boolean {
+        val hasTranslation = quranDao.hasTranslation(language, translator)
+        return hasTranslation
+    }
+
+
     suspend fun getAvailableTranslations(): List<TranslationInfo> {
         return quranDao.getAvailableTranslations()
     }
+
+
 }

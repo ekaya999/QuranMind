@@ -13,5 +13,6 @@ data class QuranState(
     val searchQuery: String = "",
     val searchResults: List<VerseUiModel> = emptyList(),
     val selectedTranslation: String = "",
+    val selectedLanguage: String = "",
     val selectedAyahNumber: Int? = null,
 )

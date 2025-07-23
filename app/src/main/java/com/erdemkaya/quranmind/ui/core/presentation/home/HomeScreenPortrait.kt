@@ -30,6 +30,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -41,6 +42,7 @@ import com.erdemkaya.quranmind.ui.core.presentation.components.util.hijriDateTex
 import com.erdemkaya.quranmind.ui.theme.QuranMindTheme
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 import java.util.Locale
 
 @Composable
@@ -74,7 +76,7 @@ fun HomeScreenPortrait(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                "Selamün Aleyküm",
+                stringResource(R.string.selamaleykum),
                 style = MaterialTheme.typography.displaySmall,
                 color = MaterialTheme.colorScheme.onBackground
             )
@@ -85,18 +87,18 @@ fun HomeScreenPortrait(
             )
             Spacer(Modifier.height(24.dp))
 
-            val locale = Locale("tr", "TR")
-            val formatter = DateTimeFormatter.ofPattern("EEEE, d MMMM yyyy", locale)
+            val locale = Locale.getDefault()
+            val formatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL).withLocale(locale)
             val date = remember { LocalDate.now().format(formatter) }
 
             Text(
-                text = "Bugün: $date",
+                text = "${stringResource(R.string.today)}: $date",
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onBackground
             )
 
             Text(
-                text = "Hicri: ${hijriDateText()}",
+                text = "${stringResource(R.string.hicri)}: ${hijriDateText()}",
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onBackground
             )

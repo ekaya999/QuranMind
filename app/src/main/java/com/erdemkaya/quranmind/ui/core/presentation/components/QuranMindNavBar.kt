@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.erdemkaya.quranmind.ui.core.presentation.components.util.QuranMindNavBarItem
@@ -52,7 +53,7 @@ fun QuranMindNavBar(
                     },
                     label = {
                         Text(
-                            text = item.title, style = MaterialTheme.typography.labelMedium,
+                            text = stringResource(item.title), style = MaterialTheme.typography.labelMedium,
                             color = if (currentScreen == item.screenRoute) MaterialTheme.colorScheme.onBackground else Color.White
                         )
                     })
