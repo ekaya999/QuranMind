@@ -1,10 +1,12 @@
 package com.erdemkaya.quranmind.ui.core.presentation.quran.mapper
 
+import androidx.compose.ui.platform.LocalContext
 import com.erdemkaya.quranmind.ui.core.domain.quran.Translation
 import com.erdemkaya.quranmind.ui.core.domain.quran.VerseWithTranslations
 import com.erdemkaya.quranmind.ui.core.presentation.components.util.getLanguageName
 import com.erdemkaya.quranmind.ui.core.presentation.quran.model.TranslationUiModel
 import com.erdemkaya.quranmind.ui.core.presentation.quran.model.VerseUiModel
+
 
 fun VerseWithTranslations.toUiModel(
     selectedTranslation: String
@@ -22,9 +24,9 @@ fun VerseWithTranslations.toUiModel(
 }
 
 fun Translation.toUiModel(): TranslationUiModel {
-    val language = getLanguageName(languageCode)
+
     return TranslationUiModel(
-        text = text, translatorInfo = "$language - $translatorName", languageCode = languageCode
+        text = text, translatorInfo = translatorName, languageCode = languageCode
     )
 }
 

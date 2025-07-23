@@ -1,6 +1,7 @@
 // QuranScreen.kt
 package com.erdemkaya.quranmind.ui.core.presentation.quran
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -26,15 +27,22 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.unit.dp
 import com.erdemkaya.quranmind.R
 import com.erdemkaya.quranmind.ui.core.presentation.components.QuranMindNavBar
 import com.erdemkaya.quranmind.ui.core.presentation.components.QuranMindScaffold
 import com.erdemkaya.quranmind.ui.core.presentation.components.QuranMindTopBar
+import com.erdemkaya.quranmind.ui.core.presentation.components.util.getLanguageName
 import com.erdemkaya.quranmind.ui.core.presentation.components.util.getSurahName
 import com.erdemkaya.quranmind.ui.core.presentation.quran.model.VerseUiModel
 
@@ -46,7 +54,8 @@ fun QuranScreenRoot(
     viewModel: QuranViewModel,
     onHomeClick: () -> Unit,
     onDuaClick: () -> Unit,
-    onProfileClick: () -> Unit
+    onProfileClick: () -> Unit,
+    onTranslationSelectClick: () -> Unit
 ) {
     QuranScreen(
         state = state, onAction = { action ->
@@ -57,13 +66,16 @@ fun QuranScreenRoot(
                 else -> Unit
             }
             viewModel.onAction(action)
-        })
+        },
+        onTranslationSelectClick = onTranslationSelectClick
+    )
 }
 
 @Composable
 fun QuranScreen(
     state: QuranState,
     onAction: (QuranAction) -> Unit,
+    onTranslationSelectClick: () -> Unit
 ) {
     QuranMindScaffold(bottomBar = {
         QuranMindNavBar(
@@ -78,11 +90,14 @@ fun QuranScreen(
         )
     }, topAppbar = {
         QuranMindTopBar(
-            title = "${getSurahName(state.currentSurahNumber)} Sûresi",
+            title = getSurahName(state.currentSurahNumber, state.selectedLanguage),
             showSearch = true,
             onSurahSelected = { surah, ayah ->
                 onAction(QuranAction.OnSearchSurahAndAyahClick(surah, ayah))
-            })
+            },
+            onTranslationSelectClick = onTranslationSelectClick,
+            selectedLanguage = state.selectedLanguage
+        )
     }, content = { paddingValues ->
         Column(
             modifier = Modifier
@@ -102,6 +117,7 @@ fun QuranScreen(
                         VersesList(
                             verses = state.verses,
                             selectedAyah = state.selectedAyahNumber,
+                            selectedSurah = state.currentSurahNumber,
                             onBookmarkClick = { })
 
                     }
@@ -116,6 +132,7 @@ fun VersesList(
     verses: List<VerseUiModel>,
     onBookmarkClick: (Int) -> Unit,
     selectedAyah: Int?,
+    selectedSurah: Int?
 ) {
     val listState = rememberLazyListState()
 
@@ -134,6 +151,15 @@ fun VersesList(
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
+        if (selectedSurah != 1 && selectedSurah != 9) {
+            item {
+                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+                    Image(bitmap = ImageBitmap.imageResource(R.drawable.bismillah),
+                        contentDescription = "Bismillah",)
+                }
+            }
+        }
+
         items(verses) { verse ->
             VerseCard(
                 verse = verse, onBookmarkClick = { onBookmarkClick(verse.id) })
@@ -143,8 +169,9 @@ fun VersesList(
 
 @Composable
 fun VerseCard(
-    verse: VerseUiModel, onBookmarkClick: () -> Unit
+    verse: VerseUiModel, onBookmarkClick: () -> Unit,
 ) {
+    val context = LocalContext.current
     Card(
         modifier = Modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
@@ -180,12 +207,12 @@ fun VerseCard(
 //                }
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
-
-            // Arabic text
+            Spacer(modifier = Modifier.height(12.dp))
 
             // Translations
             verse.translations.forEach { translation ->
+                val languageName = getLanguageName(context, translation.languageCode)
+                val displayText = "$languageName - ${translation.translatorInfo}"
                 if (translation.languageCode != "ar") {
                     Text(
                         text = verse.arabicText, style = MaterialTheme.typography.bodyLarge.copy(
@@ -195,7 +222,7 @@ fun VerseCard(
                     )
                     Spacer(modifier = Modifier.height(12.dp))
                     Text(
-                        text = translation.translatorInfo,
+                        text = displayText,
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )

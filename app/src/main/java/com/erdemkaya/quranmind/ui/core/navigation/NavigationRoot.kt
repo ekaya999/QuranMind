@@ -8,7 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.erdemkaya.quranmind.ui.core.presentation.home.HomeScreenRoot
 import com.erdemkaya.quranmind.ui.core.presentation.home.HomeViewModel
-import com.erdemkaya.quranmind.ui.core.presentation.quran.QuranScreen
+import com.erdemkaya.quranmind.ui.core.presentation.quran.QuranAction
 import com.erdemkaya.quranmind.ui.core.presentation.quran.QuranScreenRoot
 import com.erdemkaya.quranmind.ui.core.presentation.quran.QuranViewModel
 import com.erdemkaya.quranmind.ui.core.presentation.quran.TranslationSelectionScreenRoot
@@ -22,6 +22,7 @@ fun NavigationRoot(
 ) {
     val homeState by homeViewModel.state.collectAsStateWithLifecycle()
     val quranState by quranViewModel.state.collectAsStateWithLifecycle()
+    val onRemoveTranslation = { quranViewModel.onAction(QuranAction.OnRemoveTranslation) }
 
     NavHost(
         navController = navController, startDestination = "home"
@@ -36,19 +37,30 @@ fun NavigationRoot(
             )
         }
         composable(route = "translation") {
-            TranslationSelectionScreenRoot(
-                onTranslationSelected = { navController.navigate("quran") },
-                state = quranState,
-                viewModel = quranViewModel,
-                onHomeClick = {
-                    navController.navigate("home") {
-                        popUpTo("home") { inclusive = true }
+            if (quranState.selectedTranslation.isNotEmpty()) {
+                // Redirect to Quran screen if a translation is already selected
+                androidx.compose.runtime.LaunchedEffect(Unit) {
+                    navController.navigate("quran") {
+                        popUpTo("translation") { inclusive = true }
                         launchSingleTop = true
                     }
-                },
-                onDuaClick = { navController.navigate("dua") },
-                onProfileClick = { navController.navigate("profile") })
+                }
+            } else {
+                TranslationSelectionScreenRoot(
+                    onTranslationSelected = { navController.navigate("quran") },
+                    state = quranState,
+                    viewModel = quranViewModel,
+                    onHomeClick = {
+                        navController.navigate("home") {
+                            popUpTo("home") { inclusive = true }
+                            launchSingleTop = true
+                        }
+                    },
+                    onDuaClick = { navController.navigate("dua") },
+                    onProfileClick = { navController.navigate("profile") })
+            }
         }
+
         composable("quran") {
             QuranScreenRoot(
                 state = quranState,
@@ -60,7 +72,10 @@ fun NavigationRoot(
                     }
                 },
                 onDuaClick = { navController.navigate("dua") },
-                onProfileClick = { navController.navigate("profile") }
+                onProfileClick = { navController.navigate("profile") },
+                onTranslationSelectClick = {
+                    onRemoveTranslation()
+                    navController.navigate("translation") }
             )
         }
     }

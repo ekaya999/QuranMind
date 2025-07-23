@@ -10,4 +10,6 @@ sealed interface QuranAction {
     data object OnProfileClick : QuranAction
     data class OnSearchSurahClick(val surahNumber: Int) : QuranAction
     data class OnSearchSurahAndAyahClick(val surahNumber: Int,val ayahNumber: Int) : QuranAction
+    data class OnAddTranslation(val lang: String, val translator: String, val fileName: String) : QuranAction
+    data object OnRemoveTranslation : QuranAction
 }

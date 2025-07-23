@@ -25,6 +25,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.erdemkaya.quranmind.ui.core.presentation.components.util.getSurahName
+import com.erdemkaya.quranmind.ui.core.presentation.components.util.normalize
+import com.erdemkaya.quranmind.ui.core.presentation.components.util.normalizeForSorting
 import kotlinx.coroutines.launch
 import java.text.Normalizer
 import java.util.Locale
@@ -38,6 +40,7 @@ fun HorizontalNumberPicker(
     selectedValue: Int,
     onValueSelected: (Int) -> Unit,
     isSurah: Boolean = false,
+    selectedLanguage: String,
     showAlphabetical: Int = 0
 ) {
     val numbers = (minValue..maxValue).toList()
@@ -51,13 +54,10 @@ fun HorizontalNumberPicker(
         }
     }
     val context = LocalContext.current
-    val alphabeticalSurahList = remember {
-        (1..114).map { number ->
-            val resId = context.resources.getIdentifier("surah_name$number", "string", context.packageName)
-            val name = if (resId != 0) context.getString(resId) else ""
-            number to name
-        }.sortedBy { normalize(it.second) }
-    }
+    val alphabeticalSurahList = (1..114).map { number ->
+        val name = getSurahName(number, selectedLanguage)
+        number to name
+    }.sortedBy { normalize(it.second) }
 
     LazyRow(
         state = listState,
@@ -95,7 +95,7 @@ fun HorizontalNumberPicker(
                         !isSurah -> number.toString()
                         showAlphabetical == 2 -> number.toString()
                         else -> {
-                            getSurahName(number)
+                            getSurahName(number, selectedLanguage)
                         }
                     },
                     style = MaterialTheme.typography.bodyLarge,
@@ -106,11 +106,4 @@ fun HorizontalNumberPicker(
             }
         }
     }
-}
-
-fun normalize(text: String): String {
-    return Normalizer
-        .normalize(text, Normalizer.Form.NFD)
-        .replace(Regex("\\p{Mn}+"), "")
-        .lowercase(Locale.getDefault())
 }

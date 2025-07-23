@@ -44,7 +44,29 @@ class QuranViewModel(
                 loadSurah(action.surahNumber)
                 selectAyah(action.ayahNumber)
             }
+            is QuranAction.OnAddTranslation -> addTranslation(action.lang, action.translator, action.fileName)
+            is QuranAction.OnRemoveTranslation -> removeTranslation()
             else -> Unit
+        }
+    }
+
+    private fun removeTranslation() {
+        viewModelScope.launch {
+            _state.update {
+                it.copy(selectedTranslation = "")
+            }
+        }
+    }
+
+    suspend fun isTranslationLoaded(lang: String, translator: String): Boolean = repository.hasTranslation(lang, translator)
+
+    private fun addTranslation(lang: String, translator: String, fileName: String) {
+        viewModelScope.launch {
+            _state.update { it.copy(isLoading = true) }
+            initializer.loadSpecificTranslation(fileName, lang, translator) {
+                loadAvailableTranslations()  // Refresh Liste nach Laden
+                _state.update { it.copy(isLoading = false) }
+            }
         }
     }
 
@@ -83,7 +105,8 @@ class QuranViewModel(
 
         _state.update {
             it.copy(
-                selectedTranslation = translationKey
+                selectedTranslation = translationKey,
+                selectedLanguage = languageCode
             )
         }
 
